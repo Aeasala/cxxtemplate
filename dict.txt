@@ -1,4 +1,0 @@
-$(*) types:
-    @ |||| the output object of a label
-    @:.extorig=.extdiff |||| swap an    extension in a string
-    < |||| the input of a label

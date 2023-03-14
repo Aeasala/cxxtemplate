@@ -1,4 +1,4 @@
-BUILD_SDL := true
+BUILD_SDL := false
 
 ifeq ($(BUILD_SDL), true)
 LIBADD += -lSDL2
