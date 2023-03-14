@@ -20,7 +20,8 @@ CXXFLAGS =
 # C/C++ flags
 CPPFLAGS = -Wall
 # dependency-generation flags
-DEPFLAGS = -MMD -MP
+DEPFLAGS = -MM -MG -MT
+DEPFLAGSOLD = -MMD -MP
 # linker flags
 LDFLAGS = 
 # library flags
@@ -41,11 +42,13 @@ OBJECTS := \
 
 # include compiler-generated dependency rules
 DEPENDS := $(OBJECTS:.o=.d)
+DEPEND.c = $(CC) $(DEPFLAGS) $(@:.d=.o)
+DEPEND.cxx = $(cxx) $(DEPFLAGS) $(@:.d=.o)
 
 # compile C source
-COMPILE.c = $(CC) $(DEPFLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@
+COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@
 # compile C++ source
-COMPILE.cxx = $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(CPPFLAGS) -c -o $@
+COMPILE.cxx = $(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@
 # link objects
 LINK.o = $(LD) $(LDFLAGS) $(LDLIBS) $(OBJECTS) -o $@
 
@@ -55,28 +58,56 @@ LINK.o = $(LD) $(LDFLAGS) $(LDLIBS) $(OBJECTS) -o $@
 all: $(BIN)/$(EXE)
 
 $(BIN)/$(EXE): $(SRC) $(OBJ) $(BIN) $(OBJECTS)
+	$(info Linking target $@ from $<)
 	$(LINK.o)
 
 $(SRC):
-	mkdir -p $(SRC)
+	$(info ./$(SRC) directory not found, creating ./$(SRC))
+	@mkdir -p $(SRC)
 
 $(OBJ):
-	mkdir -p $(OBJ)
+	$(info ./$(OBJ) directory not found, creating ./$(OBJ))
+	@mkdir -p $(OBJ)
 
 $(BIN):
-	mkdir -p $(BIN)
+	$(info ./$(BIN) directory not found, creating ./$(BIN))
+	@mkdir -p $(BIN)
+
+$(OBJ)/%.d:	$(SRC)/%.c
+	$(info Rebuilding dependencies for $(@:.d=.c))
+	@$(DEPEND.c) $< > $@
+
+$(OBJ)/%.d:	$(SRC)/%.cc
+	$(info Rebuilding dependencies for $(@:.d=.cc))
+	@$(DEPEND.cxx) $< > $@
+
+$(OBJ)/%.d:	$(SRC)/%.cpp
+	$(info Rebuilding dependencies for $(@:.d=.cpp))
+	@$(DEPEND.cxx) $< > $@
+
+$(OBJ)/%.d:	$(SRC)/%.cxx
+	$(info Rebuilding dependencies for $(@:.d=.cxx))
+	@$(DEPEND.cxx) $< > $@
 
 $(OBJ)/%.o:	$(SRC)/%.c
-	$(COMPILE.c) $<
+	$(info Compiling source file)
+	$(info ..... ./$(@:.o=.c) ==> ./$(@))
+	@$(COMPILE.c) $<
 
 $(OBJ)/%.o:	$(SRC)/%.cc
-	$(COMPILE.cxx) $<
+	$(info Compiling source file)
+	$(info ..... ./$(@:.o=.cc) ==> ./$(@))
+	@$(COMPILE.cxx) $<
 
 $(OBJ)/%.o:	$(SRC)/%.cpp
-	$(COMPILE.cxx) $<
+	$(info Compiling source file)
+	$(info ..... ./$(@:.o=.cpp) ==> ./$(@))
+	@$(COMPILE.cxx) $<
 
 $(OBJ)/%.o:	$(SRC)/%.cxx
-	$(COMPILE.cxx) $<
+	$(info Compiling source file)
+	$(info ..... ./$(@:.o=.cxx) ==> ./$(@))
+	@$(COMPILE.cxx) $<
 
 # force rebuild
 .PHONY: remake
@@ -90,9 +121,12 @@ run: $(BIN)/$(EXE)
 # remove previous build and objects
 .PHONY: clean
 clean:
-	$(RM) $(OBJECTS)
-	$(RM) $(DEPENDS)
-	$(RM) $(BIN)/$(EXE)
+	$(info Removing (.o)bject files...)
+	@$(RM) $(OBJECTS)
+	$(info Removing (.d)ependencies...)
+	@$(RM) $(DEPENDS)
+	$(info Removing binaries/executables...)
+	@$(RM) $(BIN)/$(EXE)
 
 # remove everything except source
 .PHONY: reset
@@ -100,4 +134,7 @@ reset:
 	$(RM) -r $(OBJ)
 	$(RM) -r $(BIN)
 
+# dependencies want to get rebuilt on clean for some reason, bluntly ignore it
+ifneq ($(MAKECMDGOALS),clean)
 -include $(DEPENDS)
+endif
