@@ -21,19 +21,19 @@ CXXFLAGS =
 CPPFLAGS = -Wall
 # dependency-generation flags
 DEPFLAGS = -MM -MG -MT
-DEPFLAGSOLD = -MMD -MP
 
 # linker flags
-LDFLAGS += -Wl,--entry=$(ENTRYPT)
+ENTRYPT = _start
+LDFLAGS += -Wl,--entry=$(ENTRYPT) -lm
 ifneq ($(MAKECMDGOALS),nomap)
-LDFLAGS += -Wl,--print-map > $(BIN)/$(EXE).map
+LDFLAGS += -Wl,--print-map > $(BIN)/$(EXE).map -lm -Wl,--cref
 endif
 LDFLAGS += 
 
 
 -include libs.mk
 
-# library flags
+# library flags, pulled from the concat within libs.mk
 LDLIBS = $(LIBADD)
 
 # build directories
@@ -41,7 +41,6 @@ BIN = bin
 OBJ = obj
 SRC = src
 
-ENTRYPT = main
 
 
 SOURCES := $(wildcard $(SRC)/*.c $(SRC)/*.cc $(SRC)/*.cpp $(SRC)/*.cxx)
