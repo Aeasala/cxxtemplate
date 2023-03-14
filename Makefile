@@ -4,7 +4,7 @@
 # A generic build template for C/C++ programs
 
 # executable name
-EXE = $(shell basename $(CURDIR))
+EXE = app
 
 # C compiler
 CC = gcc
