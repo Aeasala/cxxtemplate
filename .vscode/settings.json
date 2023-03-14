@@ -5,5 +5,8 @@
             "binaryPath": "",
             "binaryArgs": []
         },
-    ]
+    ],
+    "files.associations": {
+        "sdl.h": "c"
+    }
 }

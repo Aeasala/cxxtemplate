@@ -24,8 +24,11 @@ DEPFLAGS = -MM -MG -MT
 DEPFLAGSOLD = -MMD -MP
 # linker flags
 LDFLAGS = 
+
+-include libs.mk
+
 # library flags
-LDLIBS = 
+LDLIBS = $(LIBADD)
 
 # build directories
 BIN = bin
@@ -50,7 +53,7 @@ COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@
 # compile C++ source
 COMPILE.cxx = $(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@
 # link objects
-LINK.o = $(LD) $(LDFLAGS) $(LDLIBS) $(OBJECTS) -o $@
+LINK.o = $(LD) $(LDFLAGS) $(OBJECTS) -o $@ $(LDLIBS)
 
 .DEFAULT_GOAL = all
 
