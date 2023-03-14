@@ -3,7 +3,7 @@
 
 # A generic build template for C/C++ programs
 
-# executable name
+# executable name: default is containing folder's name.
 EXE = $(shell basename $(CURDIR))
 
 # C compiler
@@ -22,18 +22,18 @@ CPPFLAGS = -Wall
 # dependency-generation flags
 DEPFLAGS = -MM -MG -MT
 
-# linker flags
+# primary linker flags
 ENTRYPT = _start
 LDFLAGS += -Wl,--entry=$(ENTRYPT) -lm
 ifneq ($(MAKECMDGOALS),nomap)
 LDFLAGS += -Wl,--print-map > $(BIN)/$(EXE).map -lm -Wl,--cref
 endif
+
+#additional linker flags
 LDFLAGS += 
 
-
--include libs.mk
-
 # library flags, pulled from the concat within libs.mk
+-include libs.mk
 LDLIBS = $(LIBADD)
 
 # build directories
@@ -127,7 +127,7 @@ remake:	clean $(BIN)/$(EXE)
 # execute the program
 .PHONY: run
 run: $(BIN)/$(EXE)
-	./$(BIN)/$(EXE)
+	@./$(BIN)/$(EXE)
 
 # remove previous build and objects
 .PHONY: clean
