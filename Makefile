@@ -22,8 +22,14 @@ CPPFLAGS = -Wall
 # dependency-generation flags
 DEPFLAGS = -MM -MG -MT
 DEPFLAGSOLD = -MMD -MP
+
 # linker flags
-LDFLAGS = 
+LDFLAGS += -Wl,--entry=$(ENTRYPT)
+ifneq ($(MAKECMDGOALS),nomap)
+LDFLAGS += -Wl,--print-map > $(BIN)/$(EXE).map
+endif
+LDFLAGS += 
+
 
 -include libs.mk
 
@@ -34,6 +40,9 @@ LDLIBS = $(LIBADD)
 BIN = bin
 OBJ = obj
 SRC = src
+
+ENTRYPT = main
+
 
 SOURCES := $(wildcard $(SRC)/*.c $(SRC)/*.cc $(SRC)/*.cpp $(SRC)/*.cxx)
 
@@ -57,9 +66,9 @@ LINK.o = $(LD) $(LDFLAGS) $(OBJECTS) -o $@ $(LDLIBS)
 
 .DEFAULT_GOAL = all
 
-.PHONY: all
-all: $(BIN)/$(EXE)
-
+.PHONY: all nomap
+all nomap: $(BIN)/$(EXE)
+	
 $(BIN)/$(EXE): $(SRC) $(OBJ) $(BIN) $(OBJECTS)
 	$(info Linking target $@ from $<)
 	$(LINK.o)
@@ -130,6 +139,7 @@ clean:
 	@$(RM) $(DEPENDS)
 	$(info Removing binaries/executables...)
 	@$(RM) $(BIN)/$(EXE)
+	@$(RM) $(BIN)/$(EXE).map
 
 # remove everything except source
 .PHONY: reset
