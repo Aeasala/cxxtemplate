@@ -26,7 +26,7 @@ DEPFLAGS = -MM -MG -MT
 ENTRYPT = _start
 LDFLAGS += -Wl,--entry=$(ENTRYPT) -lm
 ifneq ($(MAKECMDGOALS),nomap)
-LDFLAGS += -Wl,--print-map > $(BIN)/$(EXE).map -lm -Wl,--cref
+LDFLAGS += -Wl,-Map=$(BIN)/$(EXE).map -lm -Wl,--cref
 endif
 
 #additional linker flags
