@@ -41,8 +41,6 @@ BIN = bin
 OBJ = obj
 SRC = src
 
-
-
 SOURCES := $(wildcard $(SRC)/*.c $(SRC)/*.cc $(SRC)/*.cpp $(SRC)/*.cxx)
 
 OBJECTS := \
@@ -51,10 +49,14 @@ OBJECTS := \
 	$(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(wildcard $(SRC)/*.cpp)) \
 	$(patsubst $(SRC)/%.cxx, $(OBJ)/%.o, $(wildcard $(SRC)/*.cxx))
 
+# TODO
+#-include $(SRC)/subdir.mk
+	
 # include compiler-generated dependency rules
+#  | sed "s,\(\)\.o[ :]*,\1.o $@ $(@:.d=.pp) $(@:.d=.su) : ,g"
 DEPENDS := $(OBJECTS:.o=.d)
-DEPEND.c = $(CC) $(DEPFLAGS) $(@:.d=.o)
-DEPEND.cxx = $(cxx) $(DEPFLAGS) $(@:.d=.o)
+DEPEND.c = $(CC) $(DEPFLAGS) $(@:.d=.o) $(@:.d=.c) 
+DEPEND.cxx = $(CXX) $(DEPFLAGS) $(@:.d=.o) $(@:.d=.cpp) 
 
 # compile C source
 COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@
