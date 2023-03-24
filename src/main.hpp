@@ -1,5 +1,5 @@
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef __MAIN_HPP
+#define __MAIN_HPP
 
 /************/
 /* Includes */
@@ -25,4 +25,4 @@ int main(void);
 
 /***********************/
 
-#endif /* __MAIN_H */
+#endif /* __MAIN_HPP */

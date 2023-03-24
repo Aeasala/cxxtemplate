@@ -7,6 +7,7 @@
         },
     ],
     "files.associations": {
-        "sdl.h": "c"
+        "sdl.h": "c",
+        "iostream": "cpp"
     }
 }

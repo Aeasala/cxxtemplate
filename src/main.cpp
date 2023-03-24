@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Rectangle.h"
 #include "Square.h"
+#include "main.hpp"
 /************/
 
 /*********/
