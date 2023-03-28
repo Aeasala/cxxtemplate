@@ -13,5 +13,6 @@ Really as an example, if anything.  Also, for me at least, I chose SDL for makin
 ### .vscode?
 keeping for now, but might remove.
 
+### separate branches?
 
-doing this to check rebasing stuff
+i'm working on it i suck at it
