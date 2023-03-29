@@ -4,6 +4,7 @@
 # A generic build template for C/C++ programs
 
 # executable name: default is containing folder's name.
+
 EXE = $(shell basename $(CURDIR))
 
 # C compiler
@@ -23,8 +24,18 @@ CPPFLAGS = -Wall
 DEPFLAGS = -MM -MG -MT
 
 # primary linker flags
+# win
+ifeq ($(shell uname -a | grep -ic CYGWIN_NT), 1)
+LDFLAGS +=
+# lin
+else ifeq ($(shell uname -a | grep -ic Linux), 1)
 ENTRYPT = _start
 LDFLAGS += -Wl,--entry=$(ENTRYPT) -lm
+# etc
+else
+LDFLAGS +=
+endif
+
 ifneq ($(MAKECMDGOALS),nomap)
 LDFLAGS += -Wl,-Map=$(BIN)/$(EXE).map -lm -Wl,--cref
 endif
