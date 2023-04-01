@@ -60,6 +60,9 @@ OBJECTS := \
 	$(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(wildcard $(SRC)/*.cpp)) \
 	$(patsubst $(SRC)/%.cxx, $(OBJ)/%.o, $(wildcard $(SRC)/*.cxx))
 
+# subdirectory modules
+-include $(SRC)/subdir.mk
+
 # TODO
 #-include $(SRC)/subdir.mk
 	
@@ -81,7 +84,7 @@ LINK.o = $(LD) $(LDFLAGS) $(OBJECTS) -o $@ $(LDLIBS)
 .PHONY: all nomap
 all nomap: $(BIN)/$(EXE)
 	
-$(BIN)/$(EXE): $(SRC) $(OBJ) $(BIN) $(OBJECTS)
+$(BIN)/$(EXE): $(SRC) $(OBJ) $(BIN) $(OBJ_SUB) $(OBJECTS) 
 	$(info Linking target $@ from $<)
 	$(LINK.o)
 
@@ -93,9 +96,18 @@ $(OBJ):
 	$(info ./$(OBJ) directory not found, creating ./$(OBJ))
 	@mkdir -p $(OBJ)
 
+$(OBJ_SUB):
+	@mkdir -p $(OBJ_SUB)
+
 $(BIN):
 	$(info ./$(BIN) directory not found, creating ./$(BIN))
 	@mkdir -p $(BIN)
+
+$(SUBOBJDIR):
+	SUBOBJDIR = $(patsubst $(SUBMODULES), $(OBJ)/$(SUBMODULES), $(SUBMODULES))
+	$(info SUBOBJDIR directory not found, creating $(SUBOBJDIR))
+	#@mkdir -p $($(OBJ)/$(SUBMODULES))
+
 
 $(OBJ)/%.d:	$(SRC)/%.c
 	$(info Rebuilding dependencies for $(@:.d=.c))

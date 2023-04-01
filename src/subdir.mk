@@ -1,10 +1,17 @@
-#TODO
-OBJECTS := \
-	$(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(wildcard $(SRC)/*.c)) \
-	$(patsubst $(SRC)/%.cc, $(OBJ)/%.o, $(wildcard $(SRC)/*.cc)) \
-	$(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(wildcard $(SRC)/*.cpp)) \
-	$(patsubst $(SRC)/%.cxx, $(OBJ)/%.o, $(wildcard $(SRC)/*.cxx))
+mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+here := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
-# ** wildcard works to any depth?
+#TODO
+
+#folder names
+SUBMODULES += asdf meme mame
+SUBMODULES_DIRS += $(patsubst %,$(here)/%/,$(SUBMODULES))
+SUBMODULES_MAKES += $(patsubst %,%/subdir.mk,$(SUBMODULES_DIRS))
+
+OBJ_SUB := $(subst $(SRC),$(OBJ),$(SUBMODULES_DIRS))
+
+SUBSOURCES += $(wildcard $(here)/*.c $(here)/*.cc $(here)/*.cpp $(here)/*.cxx)
+SUBOBJECTS := $(patsubst $(SRC)/%.c,$(OBJ)/%.o,$(SUBSOURCES))
 	
-SOURCES += $(wildcard **/*.c **/*.cc **/*.cpp **/*.cxx)
+$(info $(OBJ_SUB))
+$(info $(SUBMODULES_DIRS))
